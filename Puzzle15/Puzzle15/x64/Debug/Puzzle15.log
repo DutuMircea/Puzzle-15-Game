@@ -1,0 +1,7 @@
+﻿  Puzzle15.cpp
+C:\Users\dutum\source\repos\Puzzle15\Puzzle15\Puzzle15.cpp(251): warning C4715: 'Direction::operator-': not all control paths return a value
+C:\Users\dutum\source\repos\Puzzle15\Puzzle15\Puzzle15.cpp(305): warning C4715: 'UserInput::charToCommand': not all control paths return a value
+C:\Users\dutum\source\repos\Puzzle15\Puzzle15\Puzzle15.cpp(233): warning C4715: 'Board::isSolved': not all control paths return a value
+C:\Users\dutum\source\repos\Puzzle15\Puzzle15\Puzzle15.cpp(178): warning C4715: 'Board::findEmpyTile': not all control paths return a value
+C:\Users\dutum\source\repos\Puzzle15\Puzzle15\Puzzle15.cpp(127): warning C4715: 'Point::getAdjacentPoint': not all control paths return a value
+  Puzzle15.vcxproj -> C:\Users\dutum\source\repos\Puzzle15\x64\Debug\Puzzle15.exe
