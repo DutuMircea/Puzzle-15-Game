@@ -6,14 +6,14 @@
 constexpr int g_consoleLines{ 25 };
 constexpr int SIZE = 4;
 
-class Tile {  // reprez un patratel
+class Tile {  // represent a single a tile that contains the number
 private:
     int m_number{};
 public:
     Tile() = default;
     Tile(int number) : m_number{ number } { }
 
-    friend std::ostream& operator<<(std::ostream& out, const Tile& tile) {
+    friend std::ostream& operator<<(std::ostream& out, const Tile& tile) { // overload to the << operator for printing
         
         if (tile.m_number > 9)
             out << ' ' << tile.m_number << ' ';
@@ -25,7 +25,7 @@ public:
         return out;
     }
 
-    friend bool operator==(const Tile& tile, int value) {
+    friend bool operator==(const Tile& tile, int value) {  // overload to the == operator
         return tile.m_number == value;
     }
 
@@ -38,7 +38,7 @@ public:
     }
 };
 
-class Direction {
+class Direction {  // the class  contains all of the directions in which we can move the tiles
 
 public:
     enum Type{
@@ -56,7 +56,7 @@ public:
 
     friend std::ostream& operator<<(std::ostream& out, const Direction& dir) {
        
-        switch (dir.m_direction) { // vechiul showCommand()
+        switch (dir.m_direction) {
         case Type::up: return(out << "up");
             break;
         case Type::down: return(out << "down");
@@ -73,13 +73,12 @@ public:
         return m_direction;
     }
     
-    static Direction getRandDirect() {
+    static Direction getRandDirect() {  // function that returns a random direction
         static std::mt19937 mt{ static_cast<std::mt19937::result_type>(std::time(nullptr)) };
 
         int rand{ mt() % (Type::max_directions) };
         Type rand_direction{ static_cast<Type>(rand) };   
 
-        //rand_direction.showCommand();
         std::cout << '\n';
         return Direction{ rand_direction };
     }
@@ -89,16 +88,15 @@ private:
 
 };
 
-class Point {
+class Point {  // the coordinate of a tile 
 private:
-    int m_x{};     // 00 10 20 30  etc.. (inversare i cu j)
-    int m_y{};     // 01 11 21 31  etc..  [i][j] -> [j][i]
+    int m_x{};     
+    int m_y{};     
                     
 public:
     Point(int x, int y) : m_x{ x }, m_y{ y } {}
 
-    //  copy constructor de facut (nah)
-    //Point(const Point& point) :m_x{ point.m_x }, m_y{ point.m_y } {}
+    
 
     friend bool operator==(const Point& p1, const Point& p2) {
         return (p1.m_x == p2.m_x && p1.m_y == p2.m_y);
@@ -111,7 +109,7 @@ public:
     int getX() const { return m_x; }
     int getY() const { return m_y; }
 
-    Point getAdjacentPoint(const Direction& dir) {
+    Point getAdjacentPoint(const Direction& dir) {  // class that returns that changes a point coordinate after a direction
 
         switch (dir.getDirection()) {
         case Direction::Type::up: return Point{ m_x, m_y - 1 };
@@ -120,7 +118,7 @@ public:
             break;
         case Direction::Type::left: return Point{ m_x - 1, m_y};
             break;
-        case Direction::Type::right:return Point{ m_x + 1, m_y};
+        case Direction::Type::right: return Point{ m_x + 1, m_y};
             break;
         }
        // return Point{ m_x,m_y };
@@ -134,7 +132,7 @@ public:
 
 class Board {
 private:
-    Tile m_tiles[4][4]{
+    Tile m_tiles[4][4]{  // our initial puzzle starts in a solved state
         Tile{ 1 }, Tile { 2 }, Tile { 3 } , Tile { 4 },
         Tile { 5 } , Tile { 6 }, Tile { 7 }, Tile { 8 },
         Tile { 9 }, Tile { 10 }, Tile { 11 }, Tile { 12 },
@@ -143,14 +141,6 @@ private:
 
 public:
     Board() = default;
-        // generare board rezolvat (old way)
-        /*int count{ 1 };
-        for(int i = 0; i < SIZE; i++){
-            for (int j = 0; j < SIZE; j++) {
-                m_tiles[i][j] = count;
-                count++;
-            }
-        }*/
 
     friend std::ostream& operator<<(std::ostream& out, const Board& board) {
 
@@ -178,23 +168,13 @@ public:
     }
 
     bool moveTile(Direction dir) {
-        Point empty{ findEmpyTile() };
-        //std::cout << empty.getX() << " " << empty.getY() << ' ';
+        Point empty{ findEmpyTile() };  // finding the empty tile
 
-        Point adjTile{ empty.getAdjacentPoint(-dir) }; // vechia fct modifica coord empty
-        //std::cout << adjTile.getX() << " " << adjTile.getY();
-        
-        /*for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                std::cout << "M["  << i << "][" << j << "] = " << m_tiles[i][j] << '\n';
-                
-            }
-        }*/
+        Point adjTile{ empty.getAdjacentPoint(-dir) }; // the valid adjacent tile that moves with the given direction
+       
 
-        if (adjTile.isValid()) {
-            //std::cout << "\nYES!\n";
-            //std::cout << m_tiles[empty.getX()][empty.getY()] << " , \n";
-            // interschimbare tile-uri
+        if (adjTile.isValid()) {  // if the tile is valid we change the coordonates acording to the direction
+            
             m_tiles[empty.getY()][empty.getX()] = m_tiles[adjTile.getY()][adjTile.getX()];
             m_tiles[adjTile.getY()][adjTile.getX()] = Tile{ 0 };
 
@@ -209,14 +189,13 @@ public:
         int i{ 0 };
         while (i < 100) {
             Direction randDir{ Direction::getRandDirect() };
-            //std::cout << randDir << '\n';
 
             if (moveTile(randDir))
                 i++;
         }
     }
 
-    bool isSolved() {
+    bool isSolved() { // checking if the board is solved
 
         int count{ 1 };
         for (int i = 0; i < SIZE; i++) {
@@ -237,7 +216,7 @@ public:
 
 
 
-Direction Direction::operator-() const {
+Direction Direction::operator-() const {  // overload to the - operator  so that we can move the tile in the oposite direction
    // return static_cast<Direction::Type>(-m_direction);
     switch (m_direction) {
     case Type::up: return Type::down;
@@ -254,7 +233,6 @@ Direction Direction::operator-() const {
 namespace UserInput {
 
     void ignoreLine(){
-        // fct pt a ignora orice caracter introdus dupa primul(idk cum fct)
         std::cin.ignore(std::numeric_limits < std::streamsize>::max(), '\n');
     }
 
@@ -290,7 +268,7 @@ namespace UserInput {
         }
     }
 
-    // convertim din c in Type 
+    // converting the input from the keyboard to a  direction
     Direction charToCommand(char c) {
         switch (c) {
         case 'w': return Direction::Type::up;
@@ -305,7 +283,9 @@ namespace UserInput {
     }
 }
 
-void randomizeBoard(Board& board) {
+void randomizeBoard(Board& board) {  
+    // we randomise the board by generating random directions
+    // this way the board can always be solved
     
     int i{ 0 };
     while (i < 100) {
@@ -346,42 +326,8 @@ void playGame() {
 }
 
 
-void Test1() {
-    Tile tile1{ 10 };
-    Tile tile2{ 8 };
-    Tile tile3{ 0 }; // the missing tile
-    Tile tile4{ 1 };
-
-    std::cout << "0123456789ABCDEF\n"; // to make it easy to see how many spaces are in the next line
-    std::cout << tile1 << tile2 << tile3 << tile4 << '\n';
-
-    std::cout << std::boolalpha << tile1.isEmpty() << ' ' << tile3.isEmpty() << '\n';
-    std::cout << "Tile 2 has number: " << tile2.getNum() << "\nTile 4 has number: " << tile4.getNum() << '\n';
-}
-void Test2() {
-    Board board{};
-    std::cout << board;
-}
-void Test3() {
-    std::cout << "Generating random direction... " << Direction::getRandDirect() << '\n';
-    std::cout << "Generating random direction... " << Direction::getRandDirect() << '\n';
-    std::cout << "Generating random direction... " << Direction::getRandDirect() << '\n';
-    std::cout << "Generating random direction... " << Direction::getRandDirect() << '\n';
-}
-void Test4() {
-    std::cout << std::boolalpha;
-    std::cout << (Point{ 1, 1 }.getAdjacentPoint(Direction::up) == Point{ 1, 0 }) << '\n';
-    std::cout << (Point{ 1, 1 }.getAdjacentPoint(Direction::down) == Point{ 1, 2 }) << '\n';
-    std::cout << (Point{ 1, 1 }.getAdjacentPoint(Direction::left) == Point{ 0, 1 }) << '\n';
-    std::cout << (Point{ 1, 1 }.getAdjacentPoint(Direction::right) == Point{ 2, 1 }) << '\n';
-    std::cout << (Point{ 1, 1 } != Point{ 2, 1 }) << '\n';
-    std::cout << (Point{ 1, 1 } != Point{ 1, 2 }) << '\n';
-    std::cout << !(Point{ 1, 1 } != Point{ 1, 1 }) << '\n';
-}
-
 int main()
 {
-    playGame();
-    
+    playGame();   
 }
 
